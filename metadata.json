@@ -1,0 +1,6 @@
+{
+  "name": "Settings CM",
+  "description": "Kumpulan perintah terminal Linux untuk kebutuhan Central Maintenance dengan tema Obito Uchiha yang elegan.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
