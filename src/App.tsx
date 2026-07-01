@@ -5,7 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Plus, Terminal, AlertTriangle, Filter, CheckCircle, RotateCcw } from 'lucide-react';
+import { Plus, Terminal, AlertTriangle, CheckCircle, RotateCcw } from 'lucide-react';
 import { MaintenanceNote } from './types';
 import { INITIAL_NOTES } from './seedData';
 import { Header } from './components/Header';
@@ -14,7 +14,7 @@ import { NotesCard } from './components/NotesCard';
 import { NoteModal } from './components/NoteModal';
 import { KamuiVortexBg } from './components/ObitoVisuals';
 
-// Import the generated Obito Uchiha background artwork
+// Background artwork rendered directly via assets path reference in markup
 
 export default function App() {
   // State for Maintenance Notes
@@ -32,7 +32,6 @@ export default function App() {
 
   // State for UI filters & themes
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
   const [activeEye, setActiveEye] = useState<'sharingan' | 'rinnegan'>(() => {
     const savedEye = localStorage.getItem('obito_active_eye');
     return (savedEye === 'rinnegan' ? 'rinnegan' : 'sharingan') as 'sharingan' | 'rinnegan';
@@ -112,17 +111,16 @@ export default function App() {
     }
   };
 
-  // Filter notes based on category & search query
+  // Filter notes based on search query
   const filteredNotes = notes.filter((note) => {
-    const matchCategory = selectedCategory === 'All' || note.category === selectedCategory;
     const cleanQuery = searchQuery.toLowerCase().trim();
-    if (!cleanQuery) return matchCategory;
+    if (!cleanQuery) return true;
 
     const matchTitle = note.judul.toLowerCase().includes(cleanQuery);
     const matchCommand = note.isiCatatan.toLowerCase().includes(cleanQuery);
     const matchNotes = note.notes.toLowerCase().includes(cleanQuery);
 
-    return matchCategory && (matchTitle || matchCommand || matchNotes);
+    return matchTitle || matchCommand || matchNotes;
   });
 
   return (
@@ -137,12 +135,14 @@ export default function App() {
       {/* Interactive Ambient Kamui Vortex floating in background */}
       <KamuiVortexBg />
 
-      {/* Header Panel with search, logo, eye switchers, and integrated Category dropdown */}
+      {/* Header Panel with integrated Add Note button in place of Category */}
       <Header
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
-        selectedCategory={selectedCategory}
-        setSelectedCategory={setSelectedCategory}
+        onAddClick={() => {
+          setEditingNote(null);
+          setIsModalOpen(true);
+        }}
         activeEye={activeEye}
         setActiveEye={setActiveEye}
       />
@@ -153,16 +153,15 @@ export default function App() {
         {/* Small Active Status Panel under header */}
         <div className="flex items-center justify-between gap-4 mb-6 px-1 select-none">
           <div className="flex items-center space-x-2 text-xs font-mono text-zinc-500">
-            <span>Filter Aktif:</span>
-            <span className={`px-2 py-0.5 rounded border ${
-              activeEye === 'sharingan' ? 'border-sharingan-red/30 text-sharingan-red' : 'border-rinnegan-purple/30 text-rinnegan-light'
-            }`}>
-              {selectedCategory === 'All' ? '📂 Semua Kategori' : `🏷️ ${selectedCategory}`}
-            </span>
             {searchQuery && (
-              <span className="text-zinc-600">
-                &ldquo;{searchQuery}&rdquo;
-              </span>
+              <>
+                <span>Hasil Pencarian:</span>
+                <span className={`px-2 py-0.5 rounded border ${
+                  activeEye === 'sharingan' ? 'border-sharingan-red/30 text-sharingan-red' : 'border-rinnegan-purple/30 text-rinnegan-light'
+                }`}>
+                  &ldquo;{searchQuery}&rdquo;
+                </span>
+              </>
             )}
           </div>
 
@@ -212,15 +211,14 @@ export default function App() {
                 Tidak ada perintah ditemukan
               </h3>
               <p className="text-xs text-zinc-500 max-w-sm">
-                Cobalah mengubah kata pencarian atau bersihkan filter kategori di dropdown atas untuk memulihkan tampilan.
+                Cobalah mengubah kata pencarian untuk memulihkan tampilan.
               </p>
             </div>
-            {(searchQuery || selectedCategory !== 'All') && (
+            {searchQuery && (
               <button
                 id="btn-clear-search-empty"
                 onClick={() => {
                   setSearchQuery('');
-                  setSelectedCategory('All');
                 }}
                 className={`px-4 py-2 rounded-lg text-xs font-semibold border transition-all duration-300 ${
                   activeEye === 'sharingan'
@@ -228,7 +226,7 @@ export default function App() {
                     : 'bg-rinnegan-purple/10 border-rinnegan-purple/40 text-rinnegan-light hover:bg-rinnegan-purple/20'
                 }`}
               >
-                Atur Ulang Pencarian & Kategori
+                Atur Ulang Pencarian
               </button>
             )}
           </motion.div>

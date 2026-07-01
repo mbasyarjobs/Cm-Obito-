@@ -4,15 +4,13 @@
  */
 
 import React from 'react';
-import { Search, Terminal, ChevronDown } from 'lucide-react';
+import { Search, Terminal, Plus } from 'lucide-react';
 import { MangekyouSharingan, Rinnegan, AkatsukiCloud } from './ObitoVisuals';
-import { CATEGORIES } from '../seedData';
 
 interface HeaderProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
-  selectedCategory: string;
-  setSelectedCategory: (category: string) => void;
+  onAddClick: () => void;
   activeEye: 'sharingan' | 'rinnegan';
   setActiveEye: (eye: 'sharingan' | 'rinnegan') => void;
 }
@@ -20,8 +18,7 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({
   searchQuery,
   setSearchQuery,
-  selectedCategory,
-  setSelectedCategory,
+  onAddClick,
   activeEye,
   setActiveEye
 }) => {
@@ -120,30 +117,25 @@ export const Header: React.FC<HeaderProps> = ({
           &ldquo;Kumpulan perintah terminal Linux untuk kebutuhan Central Maintenance.&rdquo;
         </p>
 
-        {/* Unified Search and Category Selection HUD */}
+        {/* Unified Search and Add Note HUD */}
         <div className={`flex flex-col sm:flex-row items-stretch sm:items-center w-full max-w-xl bg-[#111] border rounded-2xl overflow-hidden transition-all duration-500 ${
           activeEye === 'sharingan'
             ? 'border-zinc-800/80 focus-within:border-sharingan-red focus-within:shadow-[0_0_18px_rgba(255,26,26,0.15)]'
             : 'border-zinc-800/80 focus-within:border-rinnegan-purple focus-within:shadow-[0_0_18px_rgba(138,43,226,0.15)]'
         }`}>
-          {/* Integrated Category Filter Dropdown select */}
-          <div className="relative border-b sm:border-b-0 sm:border-r border-zinc-800 bg-[#0c0c0e]">
-            <select
-              id="category-select"
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="appearance-none cursor-pointer bg-transparent text-xs sm:text-sm font-semibold text-zinc-300 pl-4 pr-10 py-3 sm:py-3.5 outline-none select-none w-full sm:w-auto font-display hover:text-white transition-colors duration-200"
-            >
-              {CATEGORIES.map((cat) => (
-                <option key={cat} value={cat} className="bg-[#121215] text-zinc-300 font-sans">
-                  {cat === 'All' ? '📂 Semua Kategori' : `🏷️ ${cat}`}
-                </option>
-              ))}
-            </select>
-            <div className="absolute right-3.5 inset-y-0 flex items-center pointer-events-none text-zinc-500">
-              <ChevronDown size={14} />
-            </div>
-          </div>
+          {/* Add Note Button replacing Category dropdown */}
+          <button
+            id="btn-add-note-header"
+            onClick={onAddClick}
+            className={`flex items-center justify-center gap-2 px-5 py-3.5 sm:py-4 bg-zinc-950 border-b sm:border-b-0 sm:border-r border-zinc-800 text-xs sm:text-sm font-semibold font-display text-zinc-300 hover:text-white transition-all duration-300 whitespace-nowrap ${
+              activeEye === 'sharingan'
+                ? 'hover:bg-sharingan-red/15 hover:border-sharingan-red/30'
+                : 'hover:bg-rinnegan-purple/15 hover:border-rinnegan-purple/30'
+            }`}
+          >
+            <Plus size={15} className={activeEye === 'sharingan' ? 'text-sharingan-red' : 'text-rinnegan-light'} />
+            <span>Tambah Catatan Baru</span>
+          </button>
 
           {/* Search text input */}
           <div className="flex-1 relative">

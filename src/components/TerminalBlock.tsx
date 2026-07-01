@@ -73,11 +73,11 @@ export const TerminalBlock: React.FC<TerminalBlockProps> = ({ command }) => {
             {lines.map((line, index) => (
               <tr key={index} className="hover:bg-zinc-900/40 transition-colors">
                 {/* Line numbers */}
-                <td className="pr-4 text-right text-zinc-600 select-none border-r border-zinc-800/50 w-8 pr-3">
+                <td className="text-right text-zinc-600 select-none border-r border-zinc-800/50 w-8 pr-3 font-mono">
                   {index + 1}
                 </td>
                 {/* Command text */}
-                <td className="pl-4 text-emerald-400 whitespace-pre font-mono tracking-wide">
+                <td className="pl-4 text-emerald-400 whitespace-pre-wrap break-all sm:break-normal font-mono tracking-wide align-top">
                   <span className="text-zinc-500 select-none mr-1.5">$</span>
                   {line}
                 </td>
